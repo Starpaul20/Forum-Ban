@@ -35,6 +35,8 @@ if(THIS_SCRIPT == 'moderation.php')
 $plugins->add_hook("moderation_start", "forumban_run");
 $plugins->add_hook("forumdisplay_start", "forumban_link");
 $plugins->add_hook("forumdisplay_threadlist", "forumban_newthread");
+$plugins->add_hook("showthread_start", "forumban_showthread");
+$plugins->add_hook("postbit", "forumban_postbit");
 $plugins->add_hook("showthread_end", "forumban_quickreply");
 $plugins->add_hook("newreply_start", "forumban_post");
 $plugins->add_hook("newreply_do_newreply_start", "forumban_post");
@@ -42,6 +44,7 @@ $plugins->add_hook("newthread_start", "forumban_post");
 $plugins->add_hook("newthread_do_newthread_start", "forumban_post");
 $plugins->add_hook("editpost_action_start", "forumban_post");
 $plugins->add_hook("editpost_do_editpost_start", "forumban_post");
+$plugins->add_hook("xmlhttp_edit_post_end", "forumban_xmlhttp");
 $plugins->add_hook("task_usercleanup", "forumban_lift");
 $plugins->add_hook("datahandler_user_delete_content", "forumban_delete");
 
@@ -522,13 +525,32 @@ function forumban_newthread()
 	}
 }
 
-// Remove quick reply box if forum banned
-function forumban_quickreply()
+// Query to see if user is forum banned (to remove postbit buttons)
+function forumban_showthread()
 {
-	global $db, $mybb, $forum, $quickreply, $newreply;
+	global $db, $mybb, $forum, $existingban;
 
 	$query = $db->simple_select('forumbans', 'bid', "uid='{$mybb->user['uid']}' AND fid='{$forum['fid']}'");
 	$existingban = $db->fetch_field($query, 'bid');
+}
+
+// Remove postbit buttons if forum banned
+function forumban_postbit($post)
+{
+	global $existingban;
+
+	if($existingban > 0)
+	{
+		$post['button_edit'] = $post['button_quickdelete'] = $post['button_multiquote'] = $post['button_quote'] = '';
+	}
+
+	return $post;
+}
+
+// Remove quick reply box if forum banned
+function forumban_quickreply()
+{
+	global $quickreply, $newreply, $existingban;
 
 	if($existingban > 0)
 	{
@@ -548,9 +570,24 @@ function forumban_post()
 	if($existingban['bid'] > 0)
 	{
 		$existingban['reason'] = htmlspecialchars_uni($existingban['reason']);
-		$lang->error_banned_from_posting = $lang->sprintf($lang->error_banned_from_posting, $existingban['reason']);
+		$lang->error_banned_from_posting_reason = $lang->sprintf($lang->error_banned_from_posting_reason, $existingban['reason']);
 
-		error($lang->error_banned_from_posting);
+		error($lang->error_banned_from_posting_reason);
+	}
+}
+
+// Error if quick editing is used
+function forumban_xmlhttp()
+{
+	global $db, $mybb, $lang, $forum;
+	$lang->load("forumban");
+
+	$query = $db->simple_select('forumbans', 'bid', "uid='{$mybb->user['uid']}' AND fid='{$forum['fid']}'");
+	$existingban = $db->fetch_field($query, 'bid');
+
+	if($existingban['bid'] > 0)
+	{
+		xmlhttp_error($lang->error_banned_from_posting);
 	}
 }
 

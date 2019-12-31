@@ -28,7 +28,8 @@ $l['error_invaliduser'] = "The specified user does not exist.";
 $l['error_invalidforumban'] = "The specified forum ban does not exist.";
 $l['error_missing_reason'] = "You did not specify a reason for this ban.";
 $l['error_alreadybanned'] = "The user has already been banned from posting.";
-$l['error_banned_from_posting'] = "You have been banned from posting in this forum.<br /><br />Reason: {1}";
+$l['error_banned_from_posting_reason'] = "You have been banned from posting or editing in this forum.<br /><br />Reason: {1}";
+$l['error_banned_from_posting'] = "You have been banned from posting or editing in this forum.";
 
 $l['redirect_user_banned_posting'] = "The user has been banned from posting in this forum.<br />You will now be redirected to the forum.";
 $l['redirect_forum_ban_lifted'] = "The forum ban has been lifted from this user.<br />You will now be redirected to the forum.";
