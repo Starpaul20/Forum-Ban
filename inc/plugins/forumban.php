@@ -40,6 +40,8 @@ $plugins->add_hook("newreply_start", "forumban_post");
 $plugins->add_hook("newreply_do_newreply_start", "forumban_post");
 $plugins->add_hook("newthread_start", "forumban_post");
 $plugins->add_hook("newthread_do_newthread_start", "forumban_post");
+$plugins->add_hook("editpost_action_start", "forumban_post");
+$plugins->add_hook("editpost_do_editpost_start", "forumban_post");
 $plugins->add_hook("task_usercleanup", "forumban_lift");
 $plugins->add_hook("datahandler_user_delete_content", "forumban_delete");
 
