@@ -1,2 +1,2 @@
-1.0
+1.0 (January 2nd, 2020)
 - Initial release
