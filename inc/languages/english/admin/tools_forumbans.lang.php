@@ -1,11 +1,11 @@
 <?php
 /**
  * Forum Ban
- * Copyright 2019 Starpaul20
+ * Copyright 2020 Starpaul20
  */
 
 $l['forum_bans'] = "Forum Bans";
-$l['forum_bans_desc'] = "Here you can view users who have been banned from posting in a forum.";
+$l['forum_bans_desc'] = "Here you can view users who have been banned from posting and editing in a forum.";
 
 $l['can_manage_forum_bans'] = "Can manage forum bans?";
 

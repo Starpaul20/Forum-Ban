@@ -1,11 +1,11 @@
 <?php
 /**
  * Forum Ban
- * Copyright 2019 Starpaul20
+ * Copyright 2020 Starpaul20
  */
 
 $l['forumban_info_name'] = "Forum Ban";
-$l['forumban_info_desc'] = "Allows you to ban users from posting in a forum.";
+$l['forumban_info_desc'] = "Allows you to ban users from posting and editing in a forum.";
 
 $l['forum_bans'] = "Forum Bans";
 $l['forum_bans_for'] = "Forum Bans for {1}";

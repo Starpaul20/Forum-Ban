@@ -2,12 +2,14 @@
 
 Forum Ban (1.0) for MyBB 1.8
 Created by: Starpaul20
-Copyright: ©2019
+Copyright: ©2020
 License: GPL
 
-Allows you to ban users from posting in a forum.
+Allows you to ban users from posting and editing in a forum.
 
-The forum ban page can be accessed by clicking Forum Bans link located next to Subscribe to this forum on top of the thread list in a forum. This plugin offers full language support.
+The forum ban page can be accessed by clicking Forum Bans link located next to Subscribe to this forum on top of the thread list in a forum.
+
+This plugin offers full language support.
 
 
 ## INSTALLATION ##

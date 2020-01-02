@@ -1,7 +1,7 @@
 <?php
 /**
  * Forum Ban
- * Copyright 2019 Starpaul20
+ * Copyright 2020 Starpaul20
  */
 
 // Disallow direct access to this file for security reasons
