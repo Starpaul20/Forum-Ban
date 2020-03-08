@@ -1,2 +1,6 @@
+1.1 (March 8th, 2020)
+- Added Notice for users that are forum banned (Issue #1)
+- Renamed variable
+
 1.0 (January 2nd, 2020)
 - Initial release
