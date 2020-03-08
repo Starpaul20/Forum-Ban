@@ -18,7 +18,17 @@ if(THIS_SCRIPT == 'forumdisplay.php')
 	{
 		$templatelist .= ',';
 	}
-	$templatelist .= 'forumdisplay_forumbanlink';
+	$templatelist .= 'forumdisplay_forumbanlink,forumdisplay_forumbannotice';
+}
+
+if(THIS_SCRIPT == 'showthread.php')
+{
+	global $templatelist;
+	if(isset($templatelist))
+	{
+		$templatelist .= ',';
+	}
+	$templatelist .= 'forumdisplay_forumbannotice';
 }
 
 if(THIS_SCRIPT == 'moderation.php')
@@ -282,8 +292,19 @@ if(use_xmlhttprequest == "1")
 	);
 	$db->insert_query("templates", $insert_array);
 
+	$insert_array = array(
+		'title'		=> 'forumdisplay_forumbannotice',
+		'template'	=> $db->escape_string('<div class="red_alert"><strong>{$lang->error_banned_from_posting}</strong> {$lang->reason}: {$forumbanreason}<br />{$lang->ban_will_be_lifted}: {$forumbanlift}</div>'),
+		'sid'		=> '-1',
+		'version'	=> '',
+		'dateline'	=> TIME_NOW
+	);
+	$db->insert_query("templates", $insert_array);
+
 	include MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("forumdisplay_threadlist", "#".preg_quote('{$clearstoredpass}')."#i", '{$clearstoredpass}{$forumbanlink}');
+	find_replace_templatesets("forumdisplay", "#".preg_quote('{$header}')."#i", '{$header}{$forumbannotice}');
+	find_replace_templatesets("showthread", "#".preg_quote('{$header}')."#i", '{$header}{$forumbannotice}');
 
 	change_admin_permission('tools', 'forumbans');
 }
@@ -292,10 +313,12 @@ if(use_xmlhttprequest == "1")
 function forumban_deactivate()
 {
 	global $db;
-	$db->delete_query("templates", "title IN('moderation_forumban','moderation_forumban_bit','moderation_forumban_no_bans','moderation_forumban_liftlist','forumdisplay_forumbanlink')");
+	$db->delete_query("templates", "title IN('moderation_forumban','moderation_forumban_bit','moderation_forumban_no_bans','moderation_forumban_liftlist','forumdisplay_forumbanlink','forumdisplay_forumbannotice')");
 
 	include MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("forumdisplay_threadlist", "#".preg_quote('{$forumbanlink}')."#i", '', 0);
+	find_replace_templatesets("forumdisplay", "#".preg_quote('{$forumbannotice}')."#i", '', 0);
+	find_replace_templatesets("showthread", "#".preg_quote('{$forumbannotice}')."#i", '', 0);
 
 	change_admin_permission('tools', 'forumbans', -1);
 }
@@ -496,10 +519,10 @@ function forumban_run()
 	exit;
 }
 
-// Link to forum bans on forum display
+// Link to forum bans on forum display/Show ban notice on forum
 function forumban_link()
 {
-	global $mybb, $lang, $templates, $forumbanlink;
+	global $db, $mybb, $lang, $templates, $forumbanlink, $forumbannotice;
 	$lang->load("forumban");
 
 	$fid = $mybb->get_input('fid', MyBB::INPUT_INT);
@@ -508,6 +531,33 @@ function forumban_link()
 	if(is_moderator($fid, "canmanagethreads"))
 	{
 		eval('$forumbanlink = "'.$templates->get('forumdisplay_forumbanlink').'";');
+	}
+
+	$query = $db->simple_select('forumbans', 'bid, reason, lifted', "uid='{$mybb->user['uid']}' AND fid='{$fid}'");
+	$existingforumban = $db->fetch_array($query);
+
+	$forumbannotice = '';
+	if($existingforumban['bid'] > 0)
+	{
+		$forumbanlift = $lang->banned_lifted_never;
+		$forumbanreason = htmlspecialchars_uni($existingforumban['reason']);
+
+		if($existingforumban['lifted'] > 0)
+		{
+			$forumbanlift = my_date('normal', $existingforumban['lifted']);
+		}
+
+		if(empty($forumbanreason))
+		{
+			$forumbanreason = $lang->unknown;
+		}
+
+		if(empty($forumbanlift))
+		{
+			$forumbanlift = $lang->unknown;
+		}
+
+		eval('$forumbannotice = "'.$templates->get('forumdisplay_forumbannotice').'";');
 	}
 }
 
@@ -525,13 +575,38 @@ function forumban_newthread()
 	}
 }
 
-// Query to see if user is forum banned (to remove postbit buttons)
+// Query to see if user is forum banned (to remove postbit buttons)/Show ban notice on threads
 function forumban_showthread()
 {
-	global $db, $mybb, $forum, $existingban;
+	global $db, $mybb, $lang, $templates, $forum, $existingforumban, $forumbannotice;
+	$lang->load("forumban");
 
-	$query = $db->simple_select('forumbans', 'bid', "uid='{$mybb->user['uid']}' AND fid='{$forum['fid']}'");
-	$existingban = $db->fetch_field($query, 'bid');
+	$query = $db->simple_select('forumbans', 'bid, reason, lifted', "uid='{$mybb->user['uid']}' AND fid='{$forum['fid']}'");
+	$existingforumban = $db->fetch_array($query);
+
+	$forumbannotice = '';
+	if($existingforumban['bid'] > 0)
+	{
+		$forumbanlift = $lang->banned_lifted_never;
+		$forumbanreason = htmlspecialchars_uni($existingforumban['reason']);
+
+		if($existingforumban['lifted'] > 0)
+		{
+			$forumbanlift = my_date('normal', $existingforumban['lifted']);
+		}
+
+		if(empty($forumbanreason))
+		{
+			$forumbanreason = $lang->unknown;
+		}
+
+		if(empty($forumbanlift))
+		{
+			$forumbanlift = $lang->unknown;
+		}
+
+		eval('$forumbannotice = "'.$templates->get('forumdisplay_forumbannotice').'";');
+	}
 }
 
 // Remove postbit buttons if forum banned
@@ -539,7 +614,7 @@ function forumban_postbit($post)
 {
 	global $existingban;
 
-	if($existingban > 0)
+	if($existingban['bid'] > 0)
 	{
 		$post['button_edit'] = $post['button_quickdelete'] = $post['button_multiquote'] = $post['button_quote'] = '';
 	}
@@ -552,7 +627,7 @@ function forumban_quickreply()
 {
 	global $quickreply, $newreply, $existingban;
 
-	if($existingban > 0)
+	if($existingban['bid'] > 0)
 	{
 		$quickreply = $newreply = '';
 	}
