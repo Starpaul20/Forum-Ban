@@ -190,11 +190,11 @@ function forumban_activate()
 		</tr>
 		<tr>
 			<td class="trow1" width="25%"><strong>{$lang->username}:</strong></td>
-			<td class="trow1" width="75%"><input type="text" class="textbox" name="username" id="username" value="{$username}" size="25" /></td>
+			<td class="trow1" width="75%"><input type="text" class="textbox" name="username" id="username" size="25" /></td>
 		</tr>
 		<tr>
 			<td class="trow2" width="25%"><strong>{$lang->ban_reason}:</strong></td>
-			<td class="trow2" width="75%"><textarea name="reason" cols="60" rows="4" maxlength="200">{$banreason}</textarea></td>
+			<td class="trow2" width="75%"><textarea name="reason" cols="60" rows="4" maxlength="200"></textarea></td>
 		</tr>
 		<tr>
 			<td class="trow1" width="25%"><strong>{$lang->ban_lift_on}:</strong></td>
@@ -360,6 +360,7 @@ function forumban_run()
 		build_forum_breadcrumb($forum['fid']);
 		add_breadcrumb($lang->forum_bans);
 
+		$ban_bit = '';
 		$query = $db->query("
 			SELECT r.*, u.username, u.usergroup, u.displaygroup
 			FROM ".TABLE_PREFIX."forumbans r
@@ -386,7 +387,7 @@ function forumban_run()
 			eval("\$ban_bit .= \"".$templates->get("moderation_forumban_bit")."\";");
 		}
 
-		if(!$ban_bit)
+		if(empty($ban_bit))
 		{
 			eval("\$ban_bit = \"".$templates->get("moderation_forumban_no_bans")."\";");
 		}
@@ -540,7 +541,7 @@ function forumban_link()
 	$existingforumban = $db->fetch_array($query);
 
 	$forumbannotice = '';
-	if($existingforumban['bid'] > 0)
+	if(!empty($existingforumban) && $existingforumban['bid'] > 0)
 	{
 		$forumbanlift = $lang->banned_lifted_never;
 		$forumbanreason = htmlspecialchars_uni($existingforumban['reason']);
