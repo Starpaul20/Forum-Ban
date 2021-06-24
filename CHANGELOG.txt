@@ -1,3 +1,8 @@
+1.2 (June 24th, 2021)
+- Added check to see if THIS_SCRIPT is defined
+- Fixed PHP 8.0 errors
+- Use require_once for template updates
+
 1.1 (March 8th, 2020)
 - Added Notice for users that are forum banned (Issue #1)
 - Renamed variable
