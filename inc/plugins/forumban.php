@@ -304,7 +304,7 @@ if(use_xmlhttprequest == "1")
 	);
 	$db->insert_query("templates", $insert_array);
 
-	include MYBB_ROOT."/inc/adminfunctions_templates.php";
+	require_once MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("forumdisplay_threadlist", "#".preg_quote('{$clearstoredpass}')."#i", '{$clearstoredpass}{$forumbanlink}');
 	find_replace_templatesets("forumdisplay", "#".preg_quote('{$header}')."#i", '{$header}{$forumbannotice}');
 	find_replace_templatesets("showthread", "#".preg_quote('{$header}')."#i", '{$header}{$forumbannotice}');
@@ -318,7 +318,7 @@ function forumban_deactivate()
 	global $db;
 	$db->delete_query("templates", "title IN('moderation_forumban','moderation_forumban_bit','moderation_forumban_no_bans','moderation_forumban_liftlist','forumdisplay_forumbanlink','forumdisplay_forumbannotice')");
 
-	include MYBB_ROOT."/inc/adminfunctions_templates.php";
+	require_once MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("forumdisplay_threadlist", "#".preg_quote('{$forumbanlink}')."#i", '', 0);
 	find_replace_templatesets("forumdisplay", "#".preg_quote('{$forumbannotice}')."#i", '', 0);
 	find_replace_templatesets("showthread", "#".preg_quote('{$forumbannotice}')."#i", '', 0);
