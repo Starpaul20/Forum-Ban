@@ -1,6 +1,6 @@
 ## INFORMATION ##
 
-Forum Ban (1.2) for MyBB 1.8
+Forum Ban (1.3) for MyBB 1.8
 Created by: Starpaul20
 Copyright: ©2020
 License: GPL
