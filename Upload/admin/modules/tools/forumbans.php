@@ -37,7 +37,7 @@ if($mybb->input['action'] == "lift")
 	}
 
 	// User clicked no
-	if($mybb->input['no'])
+	if($mybb->get_input('no'))
 	{
 		admin_redirect("index.php?module=tools-forumbans");
 	}
@@ -237,7 +237,7 @@ if(!$mybb->input['action'])
 		}
 
 		$selected = '';
-		if($mybb->input['uid'] == $user['uid'])
+		if($mybb->get_input('uid') == $user['uid'])
 		{
 			$selected = "selected=\"selected\"";
 		}
